@@ -143,13 +143,28 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake)
     {
         printf("\ntick - ");
         MoveSnake(snake);
+        printf(TextFormat("\thead: {%f, %f, %f}", snake->body[0]->x, snake->body[0]->y, snake->body[0]->z));
 
         // printf("\tupdate camera - ");
         camera.position = Vector3Add(*snake->body[0], cameraNeck);
         camera.target = Vector3Add(camera.position, snake->forward);
         camera.up = snake->up;
-        UpdateCamera(&camera, CAMERA_THIRD_PERSON);
     }
+
+    // UpdateCamera(&camera, CAMERA_FREE);
+    UpdateCameraPro(&camera,
+                    (Vector3){
+                        (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * 0.1f - // Move forward-backward
+                            (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
+                        (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
+                            (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
+                        0.0f // Move up-down
+                    },
+                    (Vector3){
+                        0.f,
+                        0.f,
+                        0.0f},
+                    1.f); // Move to target (zoom)
 
     // Draw
     //----------------------------------------------------------------------------------

@@ -111,7 +111,6 @@ void DrawSnake(Snake *snake)
 {
   for (int i = 0; i <= snake->tailIndex; i++)
   {
-    // printf(TextFormat("\tbody[%i]: {%d, %d, %d}", i, snake->body[i]->x, snake->body[i]->y, snake->body[i]->z));
     DrawCubeV(*snake->body[i], SEGMENT_SIZE, PURPLE);
   }
 }
