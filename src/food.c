@@ -16,5 +16,5 @@ int CheckEaten(Food *food, Snake *snake)
 
 void DrawFood(Food *food)
 {
-  DrawCubeV(food->position, SEGMENT_SIZE, RED);
+  DrawCubeV(food->position, SEGMENT_SIZE, GREEN);
 }

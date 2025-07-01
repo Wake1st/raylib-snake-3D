@@ -39,6 +39,7 @@
 #include "clock.h"
 #include "snake.h"
 #include "food.h"
+#include "boundry.h"
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -62,7 +63,7 @@ static const int screenHeight = 900;
 static RenderTexture2D target = {0}; // Render texture to render our game
 
 // TODO: Define global variables here, recommended to make them static
-static Vector3 cameraNeck = (Vector3){0.f, 2.f, 4.f};
+static Vector3 cameraNeck = (Vector3){0.f, 3.f, 6.f};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -156,12 +157,11 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
         // check collisions
         // printf("\tchecking collision...");
         // fflush(stdout);
-        bool self = CheckSelfCollision(snake);
-        if (self)
+        if (CheckSelfCollision(snake) || CheckBoundry(snake))
         {
-            // printf("\tself collided!");
-            // fflush(stdout);
             // GAME OVER
+            printf("\n - collided! - \n");
+            fflush(stdout);
         }
 
         // feed the snake
@@ -208,7 +208,7 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
     // Draw render texture to screen, scaled if required
     DrawSnake(snake);
     DrawFood(food);
-    DrawGrid(16, 1.0f);
+    DrawBoundry();
 
     EndMode3D();
     // TODO: Draw everything that requires to be drawn at this point, maybe UI?
