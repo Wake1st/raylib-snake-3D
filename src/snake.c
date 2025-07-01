@@ -12,8 +12,14 @@ Snake InitSnake(Vector3 *start, Vector3 forward)
   };
 }
 
-void MoveSnake(Snake *snake)
+RotationResult MoveSnake(Snake *snake)
 {
+  // setup result
+  RotationResult result = {
+      .rotated = false,
+      .axis = (Vector3){0.f, 0.f, 0.f},
+  };
+
   // accept input
   Direction input = HandleInput();
 
@@ -31,6 +37,9 @@ void MoveSnake(Snake *snake)
     snake->up = Vector3Scale(snake->forward, -1.f);
     snake->forward = oldUP;
 
+    result.rotated = true;
+    result.axis = Vector3Scale(snake->left, -1.f);
+
     break;
   }
   case DIRECTION_LEFT:
@@ -40,6 +49,9 @@ void MoveSnake(Snake *snake)
     Vector3 oldLeft = snake->left;
     snake->left = Vector3Scale(snake->forward, -1.f);
     snake->forward = oldLeft;
+
+    result.rotated = true;
+    result.axis = snake->up;
 
     break;
   }
@@ -51,6 +63,9 @@ void MoveSnake(Snake *snake)
     snake->up = snake->forward;
     snake->forward = Vector3Scale(oldUP, -1.f);
 
+    result.rotated = true;
+    result.axis = snake->left;
+
     break;
   }
   case DIRECTION_RIGHT:
@@ -60,6 +75,9 @@ void MoveSnake(Snake *snake)
     Vector3 oldLeft = snake->left;
     snake->left = snake->forward;
     snake->forward = Vector3Scale(oldLeft, -1.f);
+
+    result.rotated = true;
+    result.axis = Vector3Scale(snake->up, -1.f);
 
     break;
   }
@@ -85,6 +103,8 @@ void MoveSnake(Snake *snake)
       next = temp;
     }
   }
+
+  return result;
 }
 
 bool CheckSelfCollision(Snake *snake)

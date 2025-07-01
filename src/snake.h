@@ -20,8 +20,14 @@ typedef struct Snake
   int tailIndex;
 } Snake;
 
+typedef struct RotationResult
+{
+  bool rotated;
+  Vector3 axis;
+} RotationResult;
+
 Snake InitSnake(Vector3 *start, Vector3 forward);
-void MoveSnake(Snake *snake);
+RotationResult MoveSnake(Snake *snake);
 bool CheckSelfCollision(Snake *snake);
 void FeedSnake(Snake *snake);
 void DrawSnake(Snake *snake);

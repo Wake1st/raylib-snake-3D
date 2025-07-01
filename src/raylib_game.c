@@ -60,9 +60,8 @@ static const int screenHeight = 900;
 
 static RenderTexture2D target = {0}; // Render texture to render our game
 
-static const Vector3 cameraNeck = (Vector3){0.f, 4.f, 6.f};
-
 // TODO: Define global variables here, recommended to make them static
+static Vector3 cameraNeck = (Vector3){0.f, 2.f, 4.f};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -141,30 +140,17 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake)
     //----------------------------------------------------------------------------------
     if (TickClock(clock))
     {
-        printf("\ntick - ");
-        MoveSnake(snake);
-        printf(TextFormat("\thead: {%f, %f, %f}", snake->body[0]->x, snake->body[0]->y, snake->body[0]->z));
-
-        // printf("\tupdate camera - ");
-        camera.position = Vector3Add(*snake->body[0], cameraNeck);
-        camera.target = Vector3Add(camera.position, snake->forward);
-        camera.up = snake->up;
+        RotationResult result = MoveSnake(snake);
+        if (result.rotated)
+        {
+            cameraNeck = Vector3RotateByAxisAngle(cameraNeck, result.axis, PI / 2);
+        }
     }
 
-    // UpdateCamera(&camera, CAMERA_FREE);
-    UpdateCameraPro(&camera,
-                    (Vector3){
-                        (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * 0.1f - // Move forward-backward
-                            (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
-                        (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
-                            (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
-                        0.0f // Move up-down
-                    },
-                    (Vector3){
-                        0.f,
-                        0.f,
-                        0.0f},
-                    1.f); // Move to target (zoom)
+    camera.position = Vector3Add(*snake->body[0], cameraNeck);
+    camera.target = Vector3Add(camera.position, snake->forward);
+    camera.up = snake->up;
+    UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
     // Draw
     //----------------------------------------------------------------------------------
