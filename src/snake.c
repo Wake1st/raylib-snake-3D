@@ -1,6 +1,6 @@
 #include "snake.h"
 
-Snake InitSnake(Vector3 *start, Vector3 forward)
+Snake InitSnake(Vector3 start, Vector3 forward)
 {
   return (Snake){
       .isGrowing = false,
@@ -24,7 +24,7 @@ RotationResult MoveSnake(Snake *snake)
   Direction input = HandleInput();
 
   // calculate next step
-  Vector3 currentHead = *snake->body[0];
+  Vector3 currentHead = snake->body[0];
   Vector3 next = (Vector3){0.f, 0.f, 0.f};
 
   switch (input)
@@ -98,8 +98,8 @@ RotationResult MoveSnake(Snake *snake)
     }
     else
     {
-      Vector3 temp = *snake->body[i];
-      *snake->body[i] = next;
+      Vector3 temp = snake->body[i];
+      snake->body[i] = next;
       next = temp;
     }
   }
@@ -109,10 +109,10 @@ RotationResult MoveSnake(Snake *snake)
 
 bool CheckSelfCollision(Snake *snake)
 {
-  Vector3 head = *snake->body[0];
+  Vector3 head = snake->body[0];
   for (int i = 1; i <= snake->tailIndex; i++)
   {
-    if (Vector3Equals(head, *snake->body[i]))
+    if (Vector3Equals(head, snake->body[i]))
     {
       return true;
     }
@@ -122,8 +122,8 @@ bool CheckSelfCollision(Snake *snake)
 
 void FeedSnake(Snake *snake)
 {
-  Vector3 tail = *snake->body[snake->tailIndex++];
-  *snake->body[snake->tailIndex] = tail;
+  Vector3 tail = snake->body[snake->tailIndex++];
+  snake->body[snake->tailIndex] = tail;
   snake->isGrowing = true;
 }
 
@@ -131,6 +131,6 @@ void DrawSnake(Snake *snake)
 {
   for (int i = 0; i <= snake->tailIndex; i++)
   {
-    DrawCubeV(*snake->body[i], SEGMENT_SIZE, PURPLE);
+    DrawCubeV(snake->body[i], SEGMENT_SIZE, PURPLE);
   }
 }

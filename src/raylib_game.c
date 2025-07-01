@@ -38,6 +38,7 @@
 #include "globals.h"
 #include "clock.h"
 #include "snake.h"
+#include "food.h"
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -66,7 +67,7 @@ static Vector3 cameraNeck = (Vector3){0.f, 2.f, 4.f};
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake); // Update and Draw one frame
+static void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food); // Update and Draw one frame
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -85,7 +86,7 @@ int main(void)
     // TODO: Load resources / Initialize variables at this point
 
     // Define the camera to look into our 3d world
-    Vector3 start = (Vector3){0.f, 0.f, 0.f};
+    Vector3 start = (Vector3){0.f, 0.f, 2.f};
     Vector3 forward = (Vector3){0.f, 0.f, -1.f};
 
     Camera3D camera = {0};
@@ -95,7 +96,10 @@ int main(void)
     camera.fovy = 85.0f;                     // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;  // Camera mode type
 
-    Snake snake = InitSnake(&start, forward);
+    Snake snake = InitSnake(start, forward);
+    Food food = (Food){
+        .position = (Vector3){0.f, 0.f, 0.f},
+    };
 
     // movement clock
     Clock clock = InitClock(1.f);
@@ -114,7 +118,7 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button
     {
-        UpdateDrawFrame(camera, &clock, &snake);
+        UpdateDrawFrame(camera, &clock, &snake, &food);
     }
 #endif
 
@@ -134,20 +138,51 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake)
+void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
 {
     // Update
     //----------------------------------------------------------------------------------
     if (TickClock(clock))
     {
+        // move snake
+        // printf("\nmoving...");
+        // fflush(stdout);
         RotationResult result = MoveSnake(snake);
         if (result.rotated)
         {
             cameraNeck = Vector3RotateByAxisAngle(cameraNeck, result.axis, PI / 2);
         }
+
+        // check collisions
+        // printf("\tchecking collision...");
+        // fflush(stdout);
+        bool self = CheckSelfCollision(snake);
+        if (self)
+        {
+            // printf("\tself collided!");
+            // fflush(stdout);
+            // GAME OVER
+        }
+
+        // feed the snake
+        // printf(TextFormat(
+        //     "\t{%f,%f,%f} == {%f,%f,%f}",
+        // food->position.x, food->position.x, food->position.x,
+        // (snake->body[0]).x, (snake->body[0]).y, (snake->body[0]).z));
+        // fflush(stdout);
+        if (CheckEaten(food, snake) == 1)
+        {
+            // printf("\twas eaten");
+            // fflush(stdout);
+            FeedSnake(snake);
+            MoveFood(food);
+            DecreaseClockRate(clock);
+        }
+        // printf("\tpost food");
+        // fflush(stdout);
     }
 
-    camera.position = Vector3Add(*snake->body[0], cameraNeck);
+    camera.position = Vector3Add(snake->body[0], cameraNeck);
     camera.target = Vector3Add(camera.position, snake->forward);
     camera.up = snake->up;
     UpdateCamera(&camera, CAMERA_THIRD_PERSON);
@@ -172,6 +207,7 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake)
 
     // Draw render texture to screen, scaled if required
     DrawSnake(snake);
+    DrawFood(food);
     DrawGrid(16, 1.0f);
 
     EndMode3D();
