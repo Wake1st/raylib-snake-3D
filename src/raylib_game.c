@@ -36,6 +36,8 @@
 #endif
 
 #include "globals.h"
+#include "game_state.h"
+#include "menu.h"
 #include "clock.h"
 #include "snake.h"
 #include "food.h"
@@ -57,18 +59,23 @@ typedef enum
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static const int screenWidth = 1200;
-static const int screenHeight = 900;
 
 static RenderTexture2D target = {0}; // Render texture to render our game
 
 // TODO: Define global variables here, recommended to make them static
 static Vector3 cameraNeck = (Vector3){0.f, 3.f, 6.f};
 
+static GameState ActiveState = GAME_MENU;
+
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food); // Update and Draw one frame
+
+static void MenuState();
+static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
+// static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
+// static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
+static void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -86,16 +93,34 @@ int main(void)
 
     // TODO: Load resources / Initialize variables at this point
 
-    // Define the camera to look into our 3d world
+    Texture2D playTexture = LoadTexture("resources/play_button.png");
+    Texture2D menuTexture = LoadTexture("resources/menu_button.png");
+    Texture2D creditsTexture = LoadTexture("resources/credits_button.png");
+    Texture2D exitTexture = LoadTexture("resources/exit_button.png");
+
+    Sound music = LoadSound("resources/snake.ogg");
+    Sound blip = LoadSound("resources/blip_select.ogg");
+
+    // UI   -------------------------------------------------
+    Button playButton = InitButton(playTexture, blip);
+    Button creditsButton = InitButton(creditsTexture, blip);
+    Button exitButton = InitButton(exitTexture, blip);
+    Button menuButton = InitButton(menuTexture, blip);
+
+    MainMenu mainMenu = InitMainMenu(&playButton, &creditsButton, &exitButton);
+    ScoreMenu scoreMenu = InitScoreMenu(&playButton, &menuButton);
+    CreditsMenu creditsMenu = InitCreditsMenu(&menuButton);
+
+    // PLAY -------------------------------------------------
     Vector3 start = (Vector3){0.f, 0.f, 2.f};
     Vector3 forward = (Vector3){0.f, 0.f, -1.f};
 
     Camera3D camera = {0};
-    camera.position = cameraNeck;            // Camera position
-    camera.target = start;                   // Camera looking at point
-    camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Camera up vector (rotation towards target)
-    camera.fovy = 85.0f;                     // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;  // Camera mode type
+    camera.position = cameraNeck;
+    camera.target = start;
+    camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+    camera.fovy = 85.0f;
+    camera.projection = CAMERA_PERSPECTIVE;
 
     Snake snake = InitSnake(start, forward);
     Food food = (Food){
@@ -140,6 +165,46 @@ int main(void)
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
 void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
+{
+    switch (ActiveState)
+    {
+    case GAME_MENU:
+    {
+        MenuState(camera, clock, snake, food);
+        break;
+    }
+    case GAME_INTRO:
+
+        break;
+    case GAME_PLAY:
+    {
+        PlayState(camera, clock, snake, food);
+        break;
+    }
+    case GAME_OUTRO:
+
+        break;
+    }
+}
+
+void MenuState()
+{
+    // Update
+    //----------------------------------------------------------------------------------
+
+    //----------------------------------------------------------------------------------
+
+    // Draw
+    //----------------------------------------------------------------------------------
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    EndDrawing();
+    //----------------------------------------------------------------------------------
+}
+
+void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food)
 {
     // Update
     //----------------------------------------------------------------------------------
@@ -189,16 +254,6 @@ void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
 
     // Draw
     //----------------------------------------------------------------------------------
-    // Render game screen to a texture,
-    // it could be useful for scaling or further shader postprocessing
-    // BeginTextureMode(target);
-    // ClearBackground(RAYWHITE);
-
-    // // TODO: Draw your game screen here
-    // DrawText("Welcome to raylib NEXT gamejam!", 150, 140, 30, BLACK);
-    // DrawRectangleLinesEx((Rectangle){0, 0, screenWidth, screenHeight}, 16, BLACK);
-
-    // EndTextureMode();
 
     // Render to screen (main framebuffer)
     BeginDrawing();
