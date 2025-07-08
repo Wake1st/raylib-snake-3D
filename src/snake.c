@@ -12,6 +12,16 @@ Snake InitSnake(Vector3 start, Vector3 forward)
   };
 }
 
+void ResetSnake(Snake *snake, Vector3 start, Vector3 forward)
+{
+  snake->isGrowing = false;
+  snake->forward = forward;
+  snake->left = (Vector3){-1.f, 0.f, 0.f};
+  snake->up = (Vector3){0.f, 1.f, 0.f};
+  snake->tailIndex = 0;
+  snake->body[0] = start;
+}
+
 RotationResult MoveSnake(Snake *snake)
 {
   // setup result

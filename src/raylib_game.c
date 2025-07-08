@@ -43,18 +43,17 @@
 #include "food.h"
 #include "boundry.h"
 
-//----------------------------------------------------------------------------------
-// Types and Structures Definition
-//----------------------------------------------------------------------------------
-typedef enum
-{
-    SCREEN_LOGO = 0,
-    SCREEN_TITLE,
-    SCREEN_GAMEPLAY,
-    SCREEN_ENDING
-} GameScreen;
-
 // TODO: Define your custom data types here
+typedef struct GameData
+{
+    Camera3D camera;
+    Clock *clock;
+    Snake *snake;
+    Food *food;
+    MainMenu *main;
+    CreditsMenu *credits;
+    ScoreMenu *score;
+} GameData;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -63,19 +62,24 @@ typedef enum
 static RenderTexture2D target = {0}; // Render texture to render our game
 
 // TODO: Define global variables here, recommended to make them static
-static Vector3 cameraNeck = (Vector3){0.f, 3.f, 6.f};
+static const Vector3 cameraNeckStart = (Vector3){0.f, 3.f, 6.f};
 
-static GameState ActiveState = GAME_MENU;
+static Vector3 cameraNeck = cameraNeckStart;
+static float clockStartRate = 0.8f;
+static GameState activeState = GAME_MENU;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 
-static void MenuState();
+static void SetupGame(GameData *data);
+static void MenuState(MainMenu *menu);
+static void CreditsState(CreditsMenu *menu);
+static void ScoreState(ScoreMenu *menu);
 static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
-static void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food);
+static bool UpdateDrawFrame(GameData data);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -98,14 +102,14 @@ int main(void)
     Texture2D creditsTexture = LoadTexture("resources/credits_button.png");
     Texture2D exitTexture = LoadTexture("resources/exit_button.png");
 
-    Sound music = LoadSound("resources/snake.ogg");
+    // Sound music = LoadSound("resources/snake.ogg");
     Sound blip = LoadSound("resources/blip_select.ogg");
 
     // UI   -------------------------------------------------
-    Button playButton = InitButton(playTexture, blip);
-    Button creditsButton = InitButton(creditsTexture, blip);
-    Button exitButton = InitButton(exitTexture, blip);
-    Button menuButton = InitButton(menuTexture, blip);
+    Button playButton = InitButton(playTexture, (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
+    Button creditsButton = InitButton(creditsTexture, (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
+    Button exitButton = InitButton(exitTexture, (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
+    Button menuButton = InitButton(menuTexture, (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
 
     MainMenu mainMenu = InitMainMenu(&playButton, &creditsButton, &exitButton);
     ScoreMenu scoreMenu = InitScoreMenu(&playButton, &menuButton);
@@ -128,7 +132,17 @@ int main(void)
     };
 
     // movement clock
-    Clock clock = InitClock(1.f);
+    Clock clock = InitClock(clockStartRate);
+
+    GameData gameData = (GameData){
+        .camera = camera,
+        .clock = &clock,
+        .snake = &snake,
+        .food = &food,
+        .main = &mainMenu,
+        .credits = &creditsMenu,
+        .score = &scoreMenu,
+    };
 
     // Render texture to draw full screen, enables screen scaling
     // NOTE: If screen is scaled, mouse input should be scaled proportionally
@@ -136,7 +150,7 @@ int main(void)
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
 #if defined(PLATFORM_WEB)
-    emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+    emscripten_set_main_loopbool UpdateDrawFrame, 60, 1);
 #else
     SetTargetFPS(60); // Set our game frames-per-second
     //--------------------------------------------------------------------------------------
@@ -144,7 +158,7 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button
     {
-        UpdateDrawFrame(camera, &clock, &snake, &food);
+        UpdateDrawFrame(gameData);
     }
 #endif
 
@@ -153,6 +167,12 @@ int main(void)
     UnloadRenderTexture(target);
 
     // TODO: Unload all loaded resources at this point
+    UnloadTexture(playTexture);
+    UnloadTexture(menuTexture);
+    UnloadTexture(creditsTexture);
+    UnloadTexture(exitTexture);
+
+    UnloadSound(blip);
 
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -164,44 +184,136 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-void UpdateDrawFrame(Camera3D camera, Clock *clock, Snake *snake, Food *food)
+bool UpdateDrawFrame(GameData data)
 {
-    switch (ActiveState)
+    switch (activeState)
     {
     case GAME_MENU:
     {
-        MenuState(camera, clock, snake, food);
+        MenuState(data.main);
+
+        // setup game
+        if (activeState == GAME_PLAY)
+        {
+            SetupGame(&data);
+        }
+
+        break;
+    }
+    case GAME_CREDITS:
+    {
+        CreditsState(data.credits);
         break;
     }
     case GAME_INTRO:
+    {
 
         break;
+    }
     case GAME_PLAY:
     {
-        PlayState(camera, clock, snake, food);
+        PlayState(data.camera, data.clock, data.snake, data.food);
+        break;
+    }
+    case GAME_SCORE:
+    {
+        ScoreState(data.score);
+
+        // setup game
+        if (activeState == GAME_PLAY)
+        {
+            SetupGame(&data);
+        }
+
         break;
     }
     case GAME_OUTRO:
+    {
 
         break;
     }
+    case GAME_EXIT:
+    {
+        return true;
+    }
+    case GAME_NONE:
+    {
+        break;
+    }
+    }
+
+    return false;
 }
 
-void MenuState()
+void SetupGame(GameData *data)
+{
+    Vector3 start = (Vector3){0.f, 0.f, 2.f};
+    Vector3 forward = (Vector3){0.f, 0.f, -1.f};
+
+    data->camera.position = cameraNeck;
+    data->camera.target = start;
+    data->camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+    cameraNeck = cameraNeckStart;
+
+    // movement clock
+    ResetSnake(data->snake, start, forward);
+    ResetClock(data->clock, clockStartRate);
+
+    MoveFood(data->food);
+}
+
+void MenuState(MainMenu *menu)
 {
     // Update
-    //----------------------------------------------------------------------------------
-
-    //----------------------------------------------------------------------------------
+    GameState selectedState = UpdateMainMenu(menu);
+    if (selectedState != GAME_NONE)
+    {
+        activeState = selectedState;
+    }
 
     // Draw
-    //----------------------------------------------------------------------------------
     BeginDrawing();
-
     ClearBackground(RAYWHITE);
 
+    DrawMainMenu(menu);
+
     EndDrawing();
-    //----------------------------------------------------------------------------------
+}
+
+void CreditsState(CreditsMenu *menu)
+{
+    // Update
+    GameState selectedState = UpdateCreditsMenu(menu);
+    if (selectedState != GAME_NONE)
+    {
+        activeState = selectedState;
+    }
+
+    // Draw
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    DrawCreditsMenu(menu);
+
+    EndDrawing();
+}
+
+void ScoreState(ScoreMenu *menu)
+{
+    // Update
+    GameState selectedState = UpdateScoreMenu(menu);
+    if (selectedState != GAME_NONE)
+    {
+        activeState = selectedState;
+    }
+
+    // Draw
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    DrawScoreMenu(menu);
+
+    EndDrawing();
 }
 
 void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food)
@@ -211,8 +323,6 @@ void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food)
     if (TickClock(clock))
     {
         // move snake
-        // printf("\nmoving...");
-        // fflush(stdout);
         RotationResult result = MoveSnake(snake);
         if (result.rotated)
         {
@@ -220,31 +330,19 @@ void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food)
         }
 
         // check collisions
-        // printf("\tchecking collision...");
-        // fflush(stdout);
         if (CheckSelfCollision(snake) || CheckBoundry(snake))
         {
             // GAME OVER
-            printf("\n - collided! - \n");
-            fflush(stdout);
+            activeState = GAME_SCORE;
         }
 
         // feed the snake
-        // printf(TextFormat(
-        //     "\t{%f,%f,%f} == {%f,%f,%f}",
-        // food->position.x, food->position.x, food->position.x,
-        // (snake->body[0]).x, (snake->body[0]).y, (snake->body[0]).z));
-        // fflush(stdout);
         if (CheckEaten(food, snake) == 1)
         {
-            // printf("\twas eaten");
-            // fflush(stdout);
             FeedSnake(snake);
             MoveFood(food);
             DecreaseClockRate(clock);
         }
-        // printf("\tpost food");
-        // fflush(stdout);
     }
 
     camera.position = Vector3Add(snake->body[0], cameraNeck);

@@ -10,6 +10,7 @@ typedef struct Clock
 } Clock;
 
 Clock InitClock(float start);
+void ResetClock(Clock *clock, float start);
 bool TickClock(Clock *clock);
 void DecreaseClockRate(Clock *clock);
 void SetClockRate(Clock *clock, float rate);

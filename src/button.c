@@ -1,27 +1,32 @@
 #include "button.h"
 
-Button InitButton(Texture2D text, Sound soundFx)
+Button InitButton(Texture2D text, Vector2 offset, Sound soundFx, GameState state)
 {
   // Define frame rectangle for drawing
   frameHeight = (float)text.height / BUTTON_FRAMES;
   Rectangle sourceRec = {0, 0, (float)text.width, frameHeight};
 
-  // Define button bounds on screen
-  Rectangle btnBounds = {screenWidth / 2.0f - text.width / 2.0f, screenHeight / 2.0f - text.height / BUTTON_FRAMES / 2.0f, (float)text.width, frameHeight};
+  // Define button position on screen
+  Rectangle btnPosition = {
+      screenWidth / 2.0f - text.width / 2.0f + offset.x,
+      screenHeight / 2.0f - text.height / BUTTON_FRAMES / 2.0f + offset.y,
+      (float)text.width,
+      frameHeight};
 
   return (Button){
       .texture = text,
       .rect = sourceRec,
-      .bounds = btnBounds,
+      .position = btnPosition,
       .fx = soundFx,
       .selected = false,
+      .selectedState = state,
   };
 }
 
 void UpdateButton(Button *button)
 {
   // Reset selection
-  button->selected = true;
+  button->selected = false;
 
   int btnState = 0;       // Button state: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
   bool btnAction = false; // Button action should be activated
@@ -32,7 +37,7 @@ void UpdateButton(Button *button)
   btnAction = false;
 
   // Check button state
-  if (CheckCollisionPointRec(mousePoint, button->bounds))
+  if (CheckCollisionPointRec(mousePoint, button->position))
   {
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
       btnState = 2;
@@ -57,5 +62,5 @@ void UpdateButton(Button *button)
 
 void DrawButton(Button *button)
 {
-  DrawTextureRec(button->texture, button->rect, (Vector2){button->bounds.x, button->bounds.y}, WHITE);
+  DrawTextureRec(button->texture, button->rect, (Vector2){button->position.x, button->position.y}, WHITE);
 }

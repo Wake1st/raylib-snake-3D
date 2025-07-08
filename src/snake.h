@@ -26,6 +26,7 @@ typedef struct RotationResult
 } RotationResult;
 
 Snake InitSnake(Vector3 start, Vector3 forward);
+void ResetSnake(Snake *snake, Vector3 start, Vector3 forward);
 RotationResult MoveSnake(Snake *snake);
 bool CheckSelfCollision(Snake *snake);
 void FeedSnake(Snake *snake);

@@ -8,6 +8,12 @@ Clock InitClock(float start)
   };
 }
 
+void ResetClock(Clock *clock, float start)
+{
+  clock->rate = start;
+  clock->age = 0.f;
+}
+
 bool TickClock(Clock *clock)
 {
   clock->age += GetFrameTime();

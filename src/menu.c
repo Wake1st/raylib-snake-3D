@@ -9,12 +9,22 @@ MainMenu InitMainMenu(Button *play, Button *credits, Button *exit)
           exit}};
 }
 
-void UpdateMainMenu(MainMenu *menu)
+GameState UpdateMainMenu(MainMenu *menu)
 {
+  // update each button
   for (int i = 0; i < MENU_BUTTON_COUNT; i++)
   {
     UpdateButton(menu->buttons[i]);
+
+    // return if selected
+    if (menu->buttons[i]->selected)
+    {
+      return menu->buttons[i]->selectedState;
+    }
   }
+
+  // return nothing selected
+  return GAME_NONE;
 }
 
 void DrawMainMenu(MainMenu *menu)
@@ -32,9 +42,19 @@ CreditsMenu InitCreditsMenu(Button *menuButton)
   };
 }
 
-void UpdateCreditsMenu(CreditsMenu *menu)
+GameState UpdateCreditsMenu(CreditsMenu *menu)
 {
+  // check for button selection
   UpdateButton(menu->button);
+
+  // return if selected
+  if (menu->button->selected)
+  {
+    return menu->button->selectedState;
+  }
+
+  // return nothing selected
+  return GAME_NONE;
 }
 
 void DrawCreditsMenu(CreditsMenu *menu)
@@ -51,12 +71,22 @@ ScoreMenu InitScoreMenu(Button *menu, Button *play)
   };
 }
 
-void UpdateScoreMenu(ScoreMenu *menu)
+GameState UpdateScoreMenu(ScoreMenu *menu)
 {
+  // check for button selection
   for (int i = 0; i < SCORE_BUTTON_COUNT; i++)
   {
     UpdateButton(menu->buttons[i]);
+
+    // return if selected
+    if (menu->buttons[i]->selected)
+    {
+      return menu->buttons[i]->selectedState;
+    }
   }
+
+  // return nothing selected
+  return GAME_NONE;
 }
 
 void DrawScoreMenu(ScoreMenu *menu)

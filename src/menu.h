@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "game_state.h"
 #include "button.h"
 
 #define MENU_BUTTON_COUNT 3
@@ -22,15 +23,15 @@ typedef struct ScoreMenu
 } ScoreMenu;
 
 MainMenu InitMainMenu(Button *play, Button *credits, Button *exit);
-void UpdateMainMenu(MainMenu *menu);
+GameState UpdateMainMenu(MainMenu *menu);
 void DrawMainMenu(MainMenu *menu);
 
 CreditsMenu InitCreditsMenu(Button *menuButton);
-void UpdateCreditsMenu(CreditsMenu *menu);
+GameState UpdateCreditsMenu(CreditsMenu *menu);
 void DrawCreditsMenu(CreditsMenu *menu);
 
 ScoreMenu InitScoreMenu(Button *menu, Button *play);
-void UpdateScoreMenu(ScoreMenu *menu);
+GameState UpdateScoreMenu(ScoreMenu *menu);
 void DrawScoreMenu(ScoreMenu *menu);
 
 #endif
