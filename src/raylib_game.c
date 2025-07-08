@@ -65,7 +65,7 @@ static RenderTexture2D target = {0}; // Render texture to render our game
 static const Vector3 cameraNeckStart = (Vector3){0.f, 3.f, 6.f};
 
 static GameState activeState = GAME_MENU;
-static Vector3 cameraNeck = cameraNeckStart;
+static Vector3 cameraNeck = (Vector3){0.f, 0.f, 0.f};
 static float clockStartRate = 0.8f;
 static int score = 0;
 
@@ -122,6 +122,7 @@ int main(void)
     Vector3 start = (Vector3){0.f, 0.f, 2.f};
     Vector3 forward = (Vector3){0.f, 0.f, -1.f};
 
+    cameraNeck = cameraNeckStart;
     Camera3D camera = {0};
     camera.position = cameraNeck;
     camera.target = start;
