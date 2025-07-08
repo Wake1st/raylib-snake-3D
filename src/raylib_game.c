@@ -80,7 +80,8 @@ static void ScoreState(ScoreMenu *menu);
 static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
-static void UpdateDrawFrame(void *dataPtr);
+// static void UpdateDrawFrame(void *dataPtr);
+static void UpdateDrawFrame(GameData *data);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -146,17 +147,7 @@ int main(void)
         return 1;
     }
 
-    dataPtr = &(GameData){
-        .camera = camera,
-        .clock = &clock,
-        .snake = &snake,
-        .food = &food,
-        .main = &mainMenu,
-        .credits = &creditsMenu,
-        .score = &scoreMenu,
-    };
-
-    // GameData *gameData = &(GameData){
+    // dataPtr = &(GameData){
     //     .camera = camera,
     //     .clock = &clock,
     //     .snake = &snake,
@@ -165,6 +156,16 @@ int main(void)
     //     .credits = &creditsMenu,
     //     .score = &scoreMenu,
     // };
+
+    GameData *gameData = &(GameData){
+        .camera = camera,
+        .clock = &clock,
+        .snake = &snake,
+        .food = &food,
+        .main = &mainMenu,
+        .credits = &creditsMenu,
+        .score = &scoreMenu,
+    };
 
     // Render texture to draw full screen, enables screen scaling
     // NOTE: If screen is scaled, mouse input should be scaled proportionally
@@ -181,7 +182,8 @@ int main(void)
     bool exitWindow = false;
     while (!exitWindow)
     {
-        UpdateDrawFrame(dataPtr);
+        // UpdateDrawFrame(dataPtr);
+        UpdateDrawFrame(gameData);
 
         if (activeState == GAME_EXIT || WindowShouldClose())
             exitWindow = true;
@@ -210,10 +212,11 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-void UpdateDrawFrame(void *dataPtr)
+// void UpdateDrawFrame(void *dataPtr)
+void UpdateDrawFrame(GameData *data)
 {
-    GameData *data = {0};
-    data = (GameData *)data;
+    // GameData *data = {0};
+    // data = (GameData *)data;
 
     switch (activeState)
     {
@@ -287,6 +290,8 @@ void SetupGame(GameData *data)
     ResetClock(data->clock, clockStartRate);
 
     MoveFood(data->food);
+
+    score = 0;
 }
 
 void MenuState(MainMenu *menu)
