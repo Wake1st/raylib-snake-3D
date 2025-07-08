@@ -229,7 +229,7 @@ void UpdateDrawFrame(GameData *data)
         // setup game
         if (activeState == GAME_PLAY)
         {
-            SetupGame(&data);
+            SetupGame(data);
         }
 
         break;
