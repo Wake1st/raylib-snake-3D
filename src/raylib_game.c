@@ -80,7 +80,7 @@ static void ScoreState(ScoreMenu *menu);
 static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
-static bool UpdateDrawFrame(GameData data);
+static bool UpdateDrawFrame(GameData *data);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -137,7 +137,7 @@ int main(void)
     // movement clock
     Clock clock = InitClock(clockStartRate);
 
-    GameData gameData = (GameData){
+    GameData *gameData = &(GameData){
         .camera = camera,
         .clock = &clock,
         .snake = &snake,
@@ -191,13 +191,13 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-bool UpdateDrawFrame(GameData data)
+bool UpdateDrawFrame(GameData *data)
 {
     switch (activeState)
     {
     case GAME_MENU:
     {
-        MenuState(data.main);
+        MenuState(data->main);
 
         // setup game
         if (activeState == GAME_PLAY)
@@ -209,7 +209,7 @@ bool UpdateDrawFrame(GameData data)
     }
     case GAME_CREDITS:
     {
-        CreditsState(data.credits);
+        CreditsState(data->credits);
         break;
     }
     case GAME_INTRO:
@@ -219,12 +219,12 @@ bool UpdateDrawFrame(GameData data)
     }
     case GAME_PLAY:
     {
-        PlayState(data.camera, data.clock, data.snake, data.food);
+        PlayState(data->camera, data->clock, data->snake, data->food);
         break;
     }
     case GAME_SCORE:
     {
-        ScoreState(data.score);
+        ScoreState(data->score);
 
         // setup game
         if (activeState == GAME_PLAY)
