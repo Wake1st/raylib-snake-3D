@@ -153,7 +153,7 @@ int main(void)
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
 #if defined(PLATFORM_WEB)
-    emscripten_set_main_loopbool(UpdateDrawFrame, 60, 1);
+    emscripten_set_main_loop_arg(UpdateDrawFrame, gameData, 60, 1);
 #else
     SetTargetFPS(60); // Set our game frames-per-second
     //--------------------------------------------------------------------------------------
