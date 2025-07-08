@@ -80,7 +80,7 @@ static void ScoreState(ScoreMenu *menu);
 static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
-static bool UpdateDrawFrame(GameData data);
+static void UpdateDrawFrame(void *dataPtr);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -137,7 +137,15 @@ int main(void)
     // movement clock
     Clock clock = InitClock(clockStartRate);
 
-    GameData gameData = (GameData){
+    void *dataPtr;
+    dataPtr = malloc(sizeof(GameData));
+    if (dataPtr == NULL)
+    {
+        printf("memory allocation of data pointer failed!\n");
+        return 1;
+    }
+
+    dataPtr = &(GameData){
         .camera = camera,
         .clock = &clock,
         .snake = &snake,
@@ -147,13 +155,23 @@ int main(void)
         .score = &scoreMenu,
     };
 
+    // GameData *gameData = &(GameData){
+    //     .camera = camera,
+    //     .clock = &clock,
+    //     .snake = &snake,
+    //     .food = &food,
+    //     .main = &mainMenu,
+    //     .credits = &creditsMenu,
+    //     .score = &scoreMenu,
+    // };
+
     // Render texture to draw full screen, enables screen scaling
     // NOTE: If screen is scaled, mouse input should be scaled proportionally
     target = LoadRenderTexture(screenWidth, screenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
 #if defined(PLATFORM_WEB)
-    emscripten_set_main_loopbool UpdateDrawFrame, 60, 1);
+    emscripten_set_main_loop_arg(UpdateDrawFrame, dataPtr, 60, 1);
 #else
     SetTargetFPS(60); // Set our game frames-per-second
     //--------------------------------------------------------------------------------------
@@ -162,7 +180,7 @@ int main(void)
     bool exitWindow = false;
     while (!exitWindow)
     {
-        UpdateDrawFrame(gameData);
+        UpdateDrawFrame(dataPtr);
 
         if (activeState == GAME_EXIT || WindowShouldClose())
             exitWindow = true;
@@ -191,25 +209,28 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-bool UpdateDrawFrame(GameData data)
+void UpdateDrawFrame(void *dataPtr)
 {
+    GameData *data = {0};
+    data = (GameData *)data;
+
     switch (activeState)
     {
     case GAME_MENU:
     {
-        MenuState(data.main);
+        MenuState(data->main);
 
         // setup game
         if (activeState == GAME_PLAY)
         {
-            SetupGame(&data);
+            SetupGame(data);
         }
 
         break;
     }
     case GAME_CREDITS:
     {
-        CreditsState(data.credits);
+        CreditsState(data->credits);
         break;
     }
     case GAME_INTRO:
@@ -219,17 +240,17 @@ bool UpdateDrawFrame(GameData data)
     }
     case GAME_PLAY:
     {
-        PlayState(data.camera, data.clock, data.snake, data.food);
+        PlayState(data->camera, data->clock, data->snake, data->food);
         break;
     }
     case GAME_SCORE:
     {
-        ScoreState(data.score);
+        ScoreState(data->score);
 
         // setup game
         if (activeState == GAME_PLAY)
         {
-            SetupGame(&data);
+            SetupGame(data);
         }
 
         break;
@@ -241,15 +262,13 @@ bool UpdateDrawFrame(GameData data)
     }
     case GAME_EXIT:
     {
-        return true;
+        activeState = GAME_EXIT;
     }
     case GAME_NONE:
     {
         break;
     }
     }
-
-    return false;
 }
 
 void SetupGame(GameData *data)

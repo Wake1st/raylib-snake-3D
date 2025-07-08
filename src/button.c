@@ -3,20 +3,21 @@
 Button InitButton(Texture2D text, Vector2 offset, Sound soundFx, GameState state)
 {
   // Define frame rectangle for drawing
-  frameHeight = (float)text.height / BUTTON_FRAMES;
-  Rectangle sourceRec = {0, 0, (float)text.width, frameHeight};
+  float height = (float)text.height / BUTTON_FRAMES;
+  Rectangle sourceRec = {0, 0, (float)text.width, height};
 
   // Define button position on screen
   Rectangle btnPosition = {
       screenWidth / 2.0f - text.width / 2.0f + offset.x,
       screenHeight / 2.0f - text.height / BUTTON_FRAMES / 2.0f + offset.y,
       (float)text.width,
-      frameHeight};
+      height};
 
   return (Button){
       .texture = text,
       .rect = sourceRec,
       .position = btnPosition,
+      .frameHeight = height,
       .fx = soundFx,
       .selected = false,
       .selectedState = state,
@@ -57,7 +58,7 @@ void UpdateButton(Button *button)
   }
 
   // Calculate button frame rectangle to draw depending on button state
-  button->rect.y = btnState * frameHeight;
+  button->rect.y = btnState * button->frameHeight;
 }
 
 void DrawButton(Button *button)

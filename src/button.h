@@ -13,12 +13,11 @@ typedef struct Button
   Texture2D texture;
   Rectangle rect;
   Rectangle position;
+  float frameHeight;
   Sound fx;
   bool selected;
   GameState selectedState;
 } Button;
-
-static float frameHeight;
 
 Button InitButton(Texture2D text, Vector2 offset, Sound soundFx, GameState state);
 void UpdateButton(Button *button);
