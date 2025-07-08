@@ -80,7 +80,7 @@ static void ScoreState(ScoreMenu *menu);
 static void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void IntroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
 // static void OutroState(Camera3D camera, Clock *clock, Snake *snake, Food *food);
-static bool UpdateDrawFrame(GameData *data);
+static void UpdateDrawFrame(GameData *data);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -191,7 +191,7 @@ int main(void)
 // Module functions definition
 //--------------------------------------------------------------------------------------------
 // Update and draw frame
-bool UpdateDrawFrame(GameData *data)
+void UpdateDrawFrame(GameData *data)
 {
     switch (activeState)
     {
@@ -202,7 +202,7 @@ bool UpdateDrawFrame(GameData *data)
         // setup game
         if (activeState == GAME_PLAY)
         {
-            SetupGame(&data);
+            SetupGame(data);
         }
 
         break;
