@@ -241,15 +241,13 @@ void UpdateDrawFrame(GameData *data)
     }
     case GAME_EXIT:
     {
-        return true;
+        activeState = GAME_EXIT;
     }
     case GAME_NONE:
     {
         break;
     }
     }
-
-    return false;
 }
 
 void SetupGame(GameData *data)
