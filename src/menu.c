@@ -33,6 +33,9 @@ void DrawMainMenu(MainMenu *menu)
   {
     DrawButton(menu->buttons[i]);
   }
+
+  DrawText("Controls", screenWidth / 2 - 180, screenHeight / 2 + 140, 80, BLACK);
+  DrawText("Arrow Keys / WASD", screenWidth / 2 - 410, screenHeight / 2 + 240, 80, BLACK);
 }
 
 CreditsMenu InitCreditsMenu(Button *menuButton)
@@ -60,6 +63,14 @@ GameState UpdateCreditsMenu(CreditsMenu *menu)
 void DrawCreditsMenu(CreditsMenu *menu)
 {
   DrawButton(menu->button);
+
+  DrawText("Game", screenWidth / 2 - 100, screenHeight / 2 - 440, 80, BLACK);
+  DrawText("by", screenWidth / 2 - 50, screenHeight / 2 - 340, 80, BLACK);
+  DrawText("Joel Wakefield", screenWidth / 2 - 290, screenHeight / 2 - 240, 80, BLACK);
+
+  DrawText("Raylib", screenWidth / 2 - 120, screenHeight / 2 - 100, 80, BLACK);
+  DrawText("by", screenWidth / 2 - 50, screenHeight / 2, 80, BLACK);
+  DrawText("Ramon Santamaria", screenWidth / 2 - 370, screenHeight / 2 + 100, 80, BLACK);
 }
 
 ScoreMenu InitScoreMenu(Button *menu, Button *play)
@@ -89,10 +100,12 @@ GameState UpdateScoreMenu(ScoreMenu *menu)
   return GAME_NONE;
 }
 
-void DrawScoreMenu(ScoreMenu *menu)
+void DrawScoreMenu(ScoreMenu *menu, int score)
 {
   for (int i = 0; i < SCORE_BUTTON_COUNT; i++)
   {
     DrawButton(menu->buttons[i]);
   }
+
+  DrawText(TextFormat("SCORE: %d", score), screenWidth / 2 - 200, screenHeight / 2 - 40, 80, BLACK);
 }

@@ -64,9 +64,10 @@ static RenderTexture2D target = {0}; // Render texture to render our game
 // TODO: Define global variables here, recommended to make them static
 static const Vector3 cameraNeckStart = (Vector3){0.f, 3.f, 6.f};
 
+static GameState activeState = GAME_MENU;
 static Vector3 cameraNeck = cameraNeckStart;
 static float clockStartRate = 0.8f;
-static GameState activeState = GAME_MENU;
+static int score = 0;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -94,6 +95,8 @@ int main(void)
     //--------------------------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "raylib gamejam template");
     SetWindowMonitor(0);
+
+    SetExitKey(KEY_NULL);
 
     // TODO: Load resources / Initialize variables at this point
 
@@ -156,9 +159,13 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose()) // Detect window close button
+    bool exitWindow = false;
+    while (!exitWindow)
     {
         UpdateDrawFrame(gameData);
+
+        if (activeState == GAME_EXIT || WindowShouldClose())
+            exitWindow = true;
     }
 #endif
 
@@ -311,7 +318,7 @@ void ScoreState(ScoreMenu *menu)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawScoreMenu(menu);
+    DrawScoreMenu(menu, score);
 
     EndDrawing();
 }
@@ -342,6 +349,7 @@ void PlayState(Camera3D camera, Clock *clock, Snake *snake, Food *food)
             FeedSnake(snake);
             MoveFood(food);
             DecreaseClockRate(clock);
+            score++;
         }
     }
 

@@ -32,6 +32,6 @@ void DrawCreditsMenu(CreditsMenu *menu);
 
 ScoreMenu InitScoreMenu(Button *menu, Button *play);
 GameState UpdateScoreMenu(ScoreMenu *menu);
-void DrawScoreMenu(ScoreMenu *menu);
+void DrawScoreMenu(ScoreMenu *menu, int score);
 
 #endif
