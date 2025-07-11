@@ -304,6 +304,9 @@ void MenuState(MainMenu *menu)
 
     DrawMainMenu(menu);
 
+    const char *dir = GetWorkingDirectory();
+    DrawText(dir, 20, 20, 20, BLACK);
+
     EndDrawing();
 }
 
