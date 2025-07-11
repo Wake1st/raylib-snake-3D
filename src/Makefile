@@ -46,7 +46,7 @@ RAYLIB_LIBTYPE        ?= STATIC
 COMPILER_PATH         ?= C:\raylib\w64devkit\bin
 
 # Build mode for project: DEBUG or RELEASE
-BUILD_MODE            ?= RELEASE
+BUILD_MODE            ?= DEBUG
 
 # PLATFORM_WEB: Default properties
 BUILD_WEB_ASYNCIFY    ?= FALSE
