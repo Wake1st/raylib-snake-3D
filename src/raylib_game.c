@@ -109,10 +109,10 @@ int main(void)
     Sound blip = LoadSound("resources/blip_select.ogg");
 
     // UI   -------------------------------------------------
-    Button playButton = InitButton(playTexture, (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
-    Button creditsButton = InitButton(creditsTexture, (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
-    Button exitButton = InitButton(exitTexture, (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
-    Button menuButton = InitButton(menuTexture, (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
+    Button playButton = InitButton(playTexture, "play", (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
+    Button creditsButton = InitButton(creditsTexture, "credits", (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
+    Button exitButton = InitButton(exitTexture, "exit", (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
+    Button menuButton = InitButton(menuTexture, "menu", (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
 
     MainMenu mainMenu = InitMainMenu(&playButton, &creditsButton, &exitButton);
     ScoreMenu scoreMenu = InitScoreMenu(&playButton, &menuButton);

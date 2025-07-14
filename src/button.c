@@ -1,20 +1,21 @@
 #include "button.h"
 
-Button InitButton(Texture2D text, Vector2 offset, Sound soundFx, GameState state)
+Button InitButton(Texture2D texture, const char *text, Vector2 offset, Sound soundFx, GameState state)
 {
   // Define frame rectangle for drawing
-  float height = (float)text.height / BUTTON_FRAMES;
-  Rectangle sourceRec = {0, 0, (float)text.width, height};
+  float height = (float)texture.height / BUTTON_FRAMES;
+  Rectangle sourceRec = {0, 0, (float)texture.width, height};
 
   // Define button position on screen
   Rectangle btnPosition = {
-      screenWidth / 2.0f - text.width / 2.0f + offset.x,
-      screenHeight / 2.0f - text.height / BUTTON_FRAMES / 2.0f + offset.y,
-      (float)text.width,
+      screenWidth / 2.0f - texture.width / 2.0f + offset.x,
+      screenHeight / 2.0f - texture.height / BUTTON_FRAMES / 2.0f + offset.y,
+      (float)texture.width,
       height};
 
   return (Button){
-      .texture = text,
+      .texture = texture,
+      .text = text,
       .rect = sourceRec,
       .position = btnPosition,
       .frameHeight = height,
@@ -63,5 +64,7 @@ void UpdateButton(Button *button)
 
 void DrawButton(Button *button)
 {
-  DrawTextureRec(button->texture, button->rect, (Vector2){button->position.x, button->position.y}, WHITE);
+  // DrawTextureRec(button->texture, button->rect, (Vector2){button->position.x, button->position.y}, WHITE);
+  DrawRectangle(button->position.x, button->position.y, button->rect.x, button->rect.y, LIGHTGRAY);
+  DrawText(button->text, button->position.x + 40, button->position.y + 10, 40, BLACK);
 }
