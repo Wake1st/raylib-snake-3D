@@ -65,6 +65,6 @@ void UpdateButton(Button *button)
 void DrawButton(Button *button)
 {
   // DrawTextureRec(button->texture, button->rect, (Vector2){button->position.x, button->position.y}, WHITE);
-  DrawRectangle(button->position.x, button->position.y, button->rect.x, button->rect.y, LIGHTGRAY);
+  DrawRectangle(button->position.x, button->position.y, button->rect.x, button->frameHeight, LIGHTGRAY);
   DrawText(button->text, button->position.x + 40, button->position.y + 10, 40, BLACK);
 }
