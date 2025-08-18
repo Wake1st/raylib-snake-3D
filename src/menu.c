@@ -29,10 +29,13 @@ GameState UpdateMainMenu(MainMenu *menu)
 
 void DrawMainMenu(MainMenu *menu)
 {
-  for (int i = 0; i < MENU_BUTTON_COUNT; i++)
-  {
-    DrawButton(menu->buttons[i]);
-  }
+  // for (int i = 0; i < MENU_BUTTON_COUNT; i++)
+  // {
+  //   DrawButton(menu->buttons[i]);
+  // }
+  DrawButton(menu->buttons[0]);
+  DrawButton(menu->buttons[1]);
+  DrawButton(menu->buttons[2]);
 
   DrawText("Controls", screenWidth / 2 - 180, screenHeight / 2 + 140, 80, BLACK);
   DrawText("Arrow Keys / WASD", screenWidth / 2 - 410, screenHeight / 2 + 240, 80, BLACK);

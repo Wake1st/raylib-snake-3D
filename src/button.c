@@ -35,8 +35,8 @@ Button InitButton(const char *text, Vector2 offset, Sound soundFx, GameState sta
 
   // Define button position on screen
   Rectangle btnPosition = {
-      screenWidth / 2.0f - 512.0 / 2.0f + offset.x,
-      screenHeight / 2.0f - 384.0 / BUTTON_FRAMES / 2.0f + offset.y,
+      (screenWidth / 2.0f) - (512.0 / 2.0f) + offset.x,
+      (screenHeight / 2.0f) - ((384.0 / BUTTON_FRAMES) / 2.0f) + offset.y,
       512.0,
       height};
 
