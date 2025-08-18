@@ -1,20 +1,47 @@
 #include "button.h"
 
-Button InitButton(Texture2D texture, const char *text, Vector2 offset, Sound soundFx, GameState state)
+// Button InitButton(Texture2D texture, const char *text, Vector2 offset, Sound soundFx, GameState state)
+// {
+//   // Define frame rectangle for drawing
+//   float height = (float)texture.height / BUTTON_FRAMES;
+//   Rectangle sourceRec = {0, 0, (float)texture.width, height};
+
+//   // Define button position on screen
+//   Rectangle btnPosition = {
+//       screenWidth / 2.0f - texture.width / 2.0f + offset.x,
+//       screenHeight / 2.0f - texture.height / BUTTON_FRAMES / 2.0f + offset.y,
+//       (float)texture.width,
+//       height};
+
+//   return (Button){
+//       .texture = texture,
+//       .text = text,
+//       .rect = sourceRec,
+//       .position = btnPosition,
+//       .frameHeight = height,
+//       .fx = soundFx,
+//       .selected = false,
+//       .selectedState = state,
+//   };
+// }
+
+Button InitButton(const char *text, Vector2 offset, Sound soundFx, GameState state)
 {
   // Define frame rectangle for drawing
-  float height = (float)texture.height / BUTTON_FRAMES;
-  Rectangle sourceRec = {0, 0, (float)texture.width, height};
+  // float height = (float)texture.height / BUTTON_FRAMES;
+  // Rectangle sourceRec = {0, 0, (float)texture.width, height};
+  float height = 128.0;
+  Rectangle sourceRec = {0, 0, 512.0, height};
 
   // Define button position on screen
   Rectangle btnPosition = {
-      screenWidth / 2.0f - texture.width / 2.0f + offset.x,
-      screenHeight / 2.0f - texture.height / BUTTON_FRAMES / 2.0f + offset.y,
-      (float)texture.width,
+      screenWidth / 2.0f - 512.0 / 2.0f + offset.x,
+      screenHeight / 2.0f - 384.0 / BUTTON_FRAMES / 2.0f + offset.y,
+      512.0,
       height};
 
   return (Button){
-      .texture = texture,
+      // .texture = texture,
       .text = text,
       .rect = sourceRec,
       .position = btnPosition,

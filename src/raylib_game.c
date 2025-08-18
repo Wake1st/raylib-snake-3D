@@ -100,19 +100,23 @@ int main(void)
 
     // TODO: Load resources / Initialize variables at this point
 
-    Texture2D playTexture = LoadTexture("resources/play_button.png");
-    Texture2D menuTexture = LoadTexture("resources/menu_button.png");
-    Texture2D creditsTexture = LoadTexture("resources/credits_button.png");
-    Texture2D exitTexture = LoadTexture("resources/exit_button.png");
+    // Texture2D playTexture = LoadTexture("resources/play_button.png");
+    // Texture2D menuTexture = LoadTexture("resources/menu_button.png");
+    // Texture2D creditsTexture = LoadTexture("resources/credits_button.png");
+    // Texture2D exitTexture = LoadTexture("resources/exit_button.png");
 
     // Sound music = LoadSound("resources/snake.ogg");
     Sound blip = LoadSound("resources/blip_select.ogg");
 
     // UI   -------------------------------------------------
-    Button playButton = InitButton(playTexture, "play", (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
-    Button creditsButton = InitButton(creditsTexture, "credits", (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
-    Button exitButton = InitButton(exitTexture, "exit", (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
-    Button menuButton = InitButton(menuTexture, "menu", (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
+    // Button playButton = InitButton(playTexture, "play", (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
+    // Button creditsButton = InitButton(creditsTexture, "credits", (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
+    // Button exitButton = InitButton(exitTexture, "exit", (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
+    // Button menuButton = InitButton(menuTexture, "menu", (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
+    Button playButton = InitButton("play", (Vector2){.x = 0.f, .y = -360.f}, blip, GAME_PLAY);
+    Button creditsButton = InitButton("credits", (Vector2){.x = 0.f, .y = -200.f}, blip, GAME_CREDITS);
+    Button exitButton = InitButton("exit", (Vector2){.x = 0.f, .y = -40.f}, blip, GAME_EXIT);
+    Button menuButton = InitButton("menu", (Vector2){.x = 0.f, .y = 360.f}, blip, GAME_MENU);
 
     MainMenu mainMenu = InitMainMenu(&playButton, &creditsButton, &exitButton);
     ScoreMenu scoreMenu = InitScoreMenu(&playButton, &menuButton);
@@ -193,10 +197,10 @@ int main(void)
     UnloadRenderTexture(target);
 
     // TODO: Unload all loaded resources at this point
-    UnloadTexture(playTexture);
-    UnloadTexture(menuTexture);
-    UnloadTexture(creditsTexture);
-    UnloadTexture(exitTexture);
+    // UnloadTexture(playTexture);
+    // UnloadTexture(menuTexture);
+    // UnloadTexture(creditsTexture);
+    // UnloadTexture(exitTexture);
 
     UnloadSound(blip);
 

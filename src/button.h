@@ -10,7 +10,7 @@
 
 typedef struct Button
 {
-  Texture2D texture;
+  // Texture2D texture;
   const char *text;
   Rectangle rect;
   Rectangle position;
@@ -20,7 +20,8 @@ typedef struct Button
   GameState selectedState;
 } Button;
 
-Button InitButton(Texture2D texture, const char *text, Vector2 offset, Sound soundFx, GameState state);
+// Button InitButton(Texture2D texture, const char *text, Vector2 offset, Sound soundFx, GameState state);
+Button InitButton(const char *text, Vector2 offset, Sound soundFx, GameState state);
 void UpdateButton(Button *button);
 void DrawButton(Button *button);
 
